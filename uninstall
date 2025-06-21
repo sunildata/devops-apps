@@ -1,0 +1,6 @@
+#!/bin/bash
+
+echo "Uninstalling DevOps Apps..."
+rm -rf ~/devops-apps
+rm -f ~/Desktop/devops-apps.desktop
+echo "DevOps Apps removed!"

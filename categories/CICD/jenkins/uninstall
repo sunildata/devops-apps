@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "Uninstalling Jenkins..."
+sudo apt purge -y jenkins
+sudo rm -rf /var/lib/jenkins
+echo "Jenkins removed."

@@ -1,0 +1,5 @@
+#!/bin/bash
+echo "Removing Docker CE..."
+sudo apt purge -y docker-ce docker-ce-cli containerd.io
+sudo rm -rf /var/lib/docker
+echo "Docker removed."

@@ -1,0 +1,17 @@
+#!/bin/bash
+
+cd ~/devops-apps || { echo "Directory not found"; exit 1; }
+
+echo "Checking for updates..."
+git fetch origin
+
+LOCAL=$(git rev-parse HEAD)
+REMOTE=$(git rev-parse @{u})
+
+if [ "$LOCAL" != "$REMOTE" ]; then
+    echo "Update available. Pulling changes..."
+    git pull origin main
+    echo "Updated successfully!"
+else
+    echo "Already up to date."
+fi

@@ -1,0 +1,111 @@
+#!/bin/bash
+
+cd ~/devops-apps || { echo "Directory not found"; exit 1; }
+
+# Global variable to store selected app
+SELECTED_APP=""
+
+# Function to show app list
+show_app_list() {
+    APP_LIST=()
+
+    while IFS= read -r dir; do
+        APP_NAME=$(basename "$dir")
+        DESC_FILE="$dir/description.txt"
+        DESCRIPTION=$(cat "$DESC_FILE" 2>/dev/null | head -n 1)
+
+        if [[ -n "$DESCRIPTION" ]]; then
+            APP_LIST+=("$APP_NAME" "$DESCRIPTION")
+        fi
+    done < <(find categories -mindepth 2 -maxdepth 2 -type d | sort)
+
+    if [ ${#APP_LIST[@]} -eq 0 ]; then
+        zenity --error \
+               --title="Error" \
+               --text="No apps found. Check folder structure!" \
+               --width=300
+        exit 1
+    fi
+
+    SELECTED_APP=$(zenity --list \
+                         --title="DevOps Apps" \
+                         --text="Select an app:" \
+                         --column="App Name" \
+                         --column="Description" \
+                         "${APP_LIST[@]}" \
+                         --ok-label="Select" \
+                         --cancel-label="Exit")
+
+    if [[ $? -ne 0 || -z "$SELECTED_APP" ]]; then
+        echo "User canceled or no app selected."
+        exit 0
+    fi
+
+    show_action_menu
+}
+
+# Function to show action menu
+show_action_menu() {
+    ACTION=$(zenity --list \
+                   --title="Select Action" \
+                   --text="Choose an action for '$SELECTED_APP':" \
+                   --column="Action" \
+                   "Install" \
+                   "Uninstall" \
+                   "View Info" \
+                   "Back to App List")
+
+    case "$ACTION" in
+        "Install")
+            run_script "install"
+            ;;
+        "Uninstall")
+            run_script "uninstall"
+            ;;
+        "View Info")
+            show_info
+            ;;
+        "Back to App List")
+            show_app_list
+            ;;
+        *)
+            zenity --error --text="Unknown action: $ACTION"
+            ;;
+    esac
+}
+
+# Function to show info
+show_info() {
+    APP_DIR="categories/$(find categories -name "$SELECTED_APP" -type d -printf "%P\n")"
+    INFO=$(cat "$APP_DIR/description.txt")
+    zenity --info \
+           --title="$SELECTED_APP Info" \
+           --text="$INFO" \
+           --width=400
+
+    show_action_menu
+}
+
+# Function to run install/uninstall script and show output
+run_script() {
+    SCRIPT_NAME="$1"
+    APP_DIR="categories/$(find categories -name "$SELECTED_APP" -type d -printf "%P\n")"
+    LOG_FILE="/tmp/devops-apps-$SELECTED_APP-$SCRIPT_NAME.log"
+
+    zenity --info --text="Running $SCRIPT_NAME for $SELECTED_APP..." --timeout=2
+
+    # Run script and save log
+    xterm -e "bash $APP_DIR/$SCRIPT_NAME | tee $LOG_FILE" &
+    sleep 1
+
+    # Show log summary
+    zenity --text-info \
+           --title="$SCRIPT_NAME Output" \
+           --filename="$LOG_FILE" \
+           --width=600 --height=400
+
+    show_action_menu
+}
+
+# Start the GUI
+show_app_list

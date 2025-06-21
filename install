@@ -1,0 +1,29 @@
+#!/bin/bash
+
+echo "Installing DevOps Apps..."
+
+# Remove existing if needed
+rm -rf ~/devops-apps
+git clone https://github.com/YOURNAME/devops-apps.git  ~/devops-apps
+
+# Make all scripts executable
+chmod +x ~/devops-apps/*
+find ~/devops-apps/categories/* -type d -exec chmod +x {} \;
+find ~/devops-apps/categories/* -type f -exec chmod +x {} \;
+
+# Create desktop shortcut
+DESKTOP_FILE="$HOME/Desktop/devops-apps.desktop"
+cat > "$DESKTOP_FILE" << EOF
+[Desktop Entry]
+Name=DevOps Apps
+Exec=$HOME/devops-apps/gui
+Icon=$HOME/devops-apps/icon.png
+Type=Application
+Categories=Development;Utility;
+Terminal=false
+StartupNotify=true
+EOF
+
+chmod +x "$DESKTOP_FILE"
+
+echo "Installation complete! Double-click the desktop icon to launch."

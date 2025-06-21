@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "Installing K3s..."
+curl -sfL https://get.k3s.io  | sh -
+echo "K3s installed. Check status with: systemctl status k3s"

@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "Uninstalling K3s..."
+/usr/local/bin/k3s-uninstall.sh
+echo "K3s removed."
