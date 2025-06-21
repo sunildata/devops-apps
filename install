@@ -1,15 +1,17 @@
 #!/bin/bash
 
-echo "Installing DevOps Apps..."
+echo -e "\U0001f680 Setting up DevOps Apps..."
 
-# Remove existing if needed
-rm -rf ~/devops-apps
-git clone https://github.com/YOURNAME/devops-apps.git  ~/devops-apps
+# Prevent self-deletion if running from inside the folder
+if [ "$(pwd)" = "$HOME/devops-apps" ]; then
+    echo -e "\U0001f6A8 Running from ~/devops-apps — moving to home directory"
+    cd ~ || exit 1
+fi
 
 # Make all scripts executable
-chmod +x ~/devops-apps/*
-find ~/devops-apps/categories/* -type d -exec chmod +x {} \;
-find ~/devops-apps/categories/* -type f -exec chmod +x {} \;
+chmod +x "$HOME/devops-apps"/*
+find "$HOME/devops-apps/categories"/* -type d -exec chmod +x {} \;
+find "$HOME/devops-apps/categories"/* -type f -exec chmod +x {} \;
 
 # Create desktop shortcut
 DESKTOP_FILE="$HOME/Desktop/devops-apps.desktop"
@@ -26,4 +28,6 @@ EOF
 
 chmod +x "$DESKTOP_FILE"
 
-echo "Installation complete! Double-click the desktop icon to launch."
+echo -e "\U0001f389 Setup complete!"
+echo -e "\U0001f4CC You can now launch it from the desktop shortcut or run:"
+echo "   ~/devops-apps/gui"
