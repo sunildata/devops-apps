@@ -12,7 +12,6 @@ A lightweight GUI app store for installing DevOps tools on Ubuntu ARM systems.
 ## Installation
 
 ```bash
-git clone https://github.com/sunildata/devops-apps.git 
+bash -c "$(curl -fsSL https://raw.githubusercontent.com/sunildata/devops-apps/main/installer.sh)"
 cd devops-apps
-chmod +x *
-./install
+./gui
